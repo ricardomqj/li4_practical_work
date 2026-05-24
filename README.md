@@ -43,8 +43,8 @@ Users can create an account, authenticate securely, favourite auctions, place bi
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | [Blazor Server](https://learn.microsoft.com/en-us/aspnet/core/blazor/) (.NET 7) |
-| **Backend** | ASP.NET Core 7 |
+| **Frontend** | [Blazor Server](https://learn.microsoft.com/en-us/aspnet/core/blazor/) |
+| **Backend** | ASP.NET Core |
 | **Database** | Microsoft SQL Server |
 | **ORM / Data Access** | Dapper via raw SQL (`SqlDataAccess`) |
 | **Auth** | Custom `AuthenticationStateProvider` with `ProtectedSessionStorage` |
@@ -93,7 +93,7 @@ li4_practical_work/
 
 Make sure you have the following installed:
 
-- [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (or SQL Server Express / LocalDB)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) (recommended) or VS Code with the C# extension
 
