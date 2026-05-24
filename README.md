@@ -1,6 +1,6 @@
 # 🕰️ TimeTreasures
 
-> A web-based auction platform for collectible **cards** and **watches**, built as a practical assignment for the LI4 (Computer Laboratories IV) course — 3rd year of the Computer Engineering degree at the **University of Minho**, Braga, Portugal.
+> A web-based auction platform for collectible **watches**, built as a practical assignment for the LI4 (Computer Laboratories IV) course — 3rd year of the Software Engineering degree at the **University of Minho**, Braga, Portugal.
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## 📌 About the Project
 
-**TimeTreasures** is a full-stack web application that allows users to browse, bid on, and list collectible items — specifically trading cards and watches — through a real-time auction system.
+**TimeTreasures** is a full-stack web application that allows users to browse, bid on, and list collectible items, specifically watches, through a real-time auction system.
 
 Users can create an account, authenticate securely, favourite auctions, place bids, receive notifications, and manage their own listings.
 
