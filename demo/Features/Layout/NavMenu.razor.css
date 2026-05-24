@@ -18,6 +18,8 @@
 .top-row {
     height: 3.5rem;
     border-bottom: none;
+    background-color: #000000 !important;
+    background-image: none !important;
 }
 
 .navbar-brand {

@@ -136,3 +136,12 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+
+# =========================
+# Visual Studio .vs/ folder
+# =========================
+
+# Exclude all VS private state, caches and indices inside .vs/
+# (the .vs/.gitignore file itself is tracked so teammates get the same rules)
+.vs/*/
+.vs/Demo/

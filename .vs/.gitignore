@@ -1,0 +1,4 @@
+# Ignore everything inside .vs/ …
+*
+# … except this file, so it stays tracked for all collaborators
+!.gitignore
