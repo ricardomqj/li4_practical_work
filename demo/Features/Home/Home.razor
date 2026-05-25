@@ -1,4 +1,4 @@
-﻿@page "/home"
+@page "/home"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
 @using System.Globalization;
@@ -37,7 +37,7 @@
 
     private bool dataFimLeilao(LeilaoModel leilao)
     {
-        if (DateTime.ParseExact(leilao.DataFim, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now)
+        if (DateTime.ParseExact(leilao.DataFim, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now)
         {
             return true;
         }

@@ -1,4 +1,4 @@
-﻿@page "/perfilpublico/{username}"
+@page "/perfilpublico/{username}"
 @using BlazorServerAutheticationAndAuthorization.Authetication
 @using DataLayer.Utilizador
 @using DataLayer.Leilao
@@ -18,10 +18,9 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-4">
-                        @if (userFounded?.Imagem != null && userFounded?.Imagem.Length > 0)
+                        @if (!string.IsNullOrEmpty(userFounded?.Imagem))
                         {
-                            string imageBase64 = Convert.ToBase64String(userFounded?.Imagem);
-                            <img src="data:image/jpeg;base64,@imageBase64" class="watch-img-top" alt="@userFounded?.idUtilizador">
+                            <img src="@userFounded?.Imagem" class="watch-img-top" alt="@userFounded?.idUtilizador">
                         }
                         else
                         {

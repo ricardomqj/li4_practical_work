@@ -7,7 +7,7 @@ public class WatchModel
     public string Modelo { get; set; } = "";
     public string NumeroSerie { get; set; } = "";
     public string Descricao { get; set; } = "";
-    public byte[] Imagem { get; set; }
+    public string? Imagem { get; set; }
     public string Marca { get; set; } = "";
     public string EstadoConservacao { get; set; } = "";
     public bool TemCaixaOriginal { get; set; }

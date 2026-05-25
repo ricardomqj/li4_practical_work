@@ -1,4 +1,4 @@
-﻿@page "/leilao/{cardId}"
+@page "/leilao/{cardId}"
 @inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
 @using DataLayer.Leilao
 @using DataLayer.Watches
@@ -26,10 +26,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card">
-                            @if (watchInfo.Imagem != null && watchInfo.Imagem.Length > 0)
+                            @if (!string.IsNullOrEmpty(watchInfo.Imagem))
                             {
-                                string imageBase64 = Convert.ToBase64String(watchInfo.Imagem);
-                                <img src="data:image/jpeg;base64,@imageBase64" alt="Luisinho" class="card-img-top img-fluid" style="width: 100%; height: 100%; object-fit: contain; border-radius: 3%;">
+                                <img src="@watchInfo.Imagem" alt="Luisinho" class="card-img-top img-fluid" style="width: 100%; height: 100%; object-fit: contain; border-radius: 3%;">
                             }
                             else
                             {
@@ -163,11 +162,11 @@
     {
         Console.WriteLine($"New Bid: {newBidValue}");
 
-        if (DateTime.ParseExact(leilaoInfo.DataInicio, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow)
+        if (DateTime.ParseExact(leilaoInfo.DataInicio, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.UtcNow)
         {
             await JSRuntime.InvokeVoidAsync("alert", "O Leilao ainda não começou!");
         }
-        else if (DateTime.ParseExact(leilaoInfo.DataFim, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.UtcNow)
+        else if (DateTime.ParseExact(leilaoInfo.DataFim, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) < DateTime.UtcNow)
         {
             await JSRuntime.InvokeVoidAsync("alert", "O Leilao já terminou!");
         }
@@ -243,14 +242,6 @@
 
                 if (watchInfo != null)
                 {
-                    if (watchInfo.Imagem != null && watchInfo.Imagem.Length > 0)
-                    {
-                        string imageBase64 = Convert.ToBase64String(watchInfo.Imagem);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Imagem está vazia ou não inicializada.");
-                    }
                 }
                 else
                 {
@@ -297,5 +288,9 @@
     }
 
 }
+
+
+
+
 
 

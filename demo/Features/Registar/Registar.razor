@@ -1,10 +1,11 @@
-﻿@page "/registar"
+@page "/registar"
 @layout SpecialLayout
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @using DataLayer.Utilizador
 @inject IUtilizadorRepository _db
 @inject IJSRuntime js
+@inject IWebHostEnvironment _env
 
 <PageTitle>Registrar</PageTitle>
 
@@ -67,18 +68,21 @@
     private string cpassword;
     private bool showMessageBox = false;
 
-    private byte[] imagemDeRei; // Alterada para ser um array de bytes
+    // Caminho relativo da imagem guardada (ou default)
+    private string imagemPath = "uploads/users/default-avatar.png";
 
     private async Task HandleFileInput(InputFileChangeEventArgs e)
     {
         var file = e.File;
+        var ext = Path.GetExtension(file.Name).ToLowerInvariant();
+        var fileName = $"{Guid.NewGuid()}{ext}";
+        var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "users", fileName);
 
-        using (var stream = file.OpenReadStream())
-        {
-            var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            imagemDeRei = memoryStream.ToArray();
-        }
+        using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10 MB max
+        using var fs = new FileStream(uploadPath, FileMode.Create);
+        await stream.CopyToAsync(fs);
+
+        imagemPath = $"uploads/users/{fileName}";
     }
 
     private async Task RegisterUser()
@@ -95,7 +99,7 @@
                 avaliacaoMedia = 0,
                 numeroDeLeiloesFeitos = 0,
                 dataDeRegisto = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
-                Imagem = imagemDeRei
+                Imagem = imagemPath  // caminho relativo do ficheiro
             };
 
         UtilizadorModel userFounded = await _db.Find(nome);

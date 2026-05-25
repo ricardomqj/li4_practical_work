@@ -1,4 +1,4 @@
-﻿@page "/leiloar"
+@page "/leiloar"
 @using DataLayer.Watches
 @using DataLayer.Leilao
 @using DataLayer.Utilizador
@@ -10,14 +10,15 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime js
 @inject ILicitacaoRepository LicitacaoRepo
+@inject IWebHostEnvironment _env
 
-<PageTitle>Leiloar Relógio</PageTitle>
+<PageTitle>Leiloar RelÃ³gio</PageTitle>
 
 <AuthorizeView Roles="Client">
     <Authorized>
         <div class="card">
             <div class="card-header">
-                <h2>Leiloar Relógio</h2>
+                <h2>Leiloar RelÃ³gio</h2>
             </div>
             <div class="card-body">
                 <form>
@@ -34,7 +35,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">Número de Série:</span></label>
+                                <label><span class="label-text">NÃºmero de SÃ©rie:</span></label>
                                 <input type="text" @bind="numeroSerie" />
                             </div>
 
@@ -44,14 +45,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">Descrição:</span></label>
+                                <label><span class="label-text">DescriÃ§Ã£o:</span></label>
                                 <textarea @bind="descricao" style="height: 130px;"></textarea>
                             </div>
                         </div>
 
                         <div class="form-column">
                             <div class="form-group">
-                                <label><span class="label-text">Estado de Conservação:</span></label>
+                                <label><span class="label-text">Estado de ConservaÃ§Ã£o:</span></label>
                                 <select @bind="estadoConservacao">
                                     <option value="Novo">Novo</option>
                                     <option value="Usado">Usado</option>
@@ -68,13 +69,13 @@
                                     </div>
                                     <div class="radio-option">
                                         <input type="radio" id="temCaixaOriginalNao" name="temCaixaOriginal" @bind="temCaixaOriginal" />
-                                        <label for="temCaixaOriginalNao">Não</label>
+                                        <label for="temCaixaOriginalNao">NÃ£o</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">Relógio Funciona?</span></label>
+                                <label><span class="label-text">RelÃ³gio Funciona?</span></label>
                                 <div class="radio-options">
                                     <div class="radio-option">
                                         <input type="radio" id="relogioFuncionaSim" name="relogioFunciona" @bind="relogioFunciona" />
@@ -82,7 +83,7 @@
                                     </div>
                                     <div class="radio-option">
                                         <input type="radio" id="relogioFuncionaNao" name="relogioFunciona" @bind="relogioFunciona" />
-                                        <label for="relogioFuncionaNao">Não</label>
+                                        <label for="relogioFuncionaNao">NÃ£o</label>
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +94,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">Data e Hora de Início:</span></label>
+                                <label><span class="label-text">Data e Hora de InÃ­cio:</span></label>
                                 <input type="datetime-local" @bind="dataHoraInicio" />
                             </div>
 
@@ -105,13 +106,13 @@
                     </div>
 
                     <div class="price-group" style="text-align: center;">
-                        <label><span class="label-text">Preço Inicial: </span></label>
+                        <label><span class="label-text">PreÃ§o Inicial: </span></label>
                         <input type="text" @bind="precoBase" />
                     </div>
 
                     <div class="form-group" style="text-align: center; margin-top: 20px;">
                         <button class="button-9" @onclick="CriarLeilao">
-                            Criar Leilão
+                            Criar LeilÃ£o
                         </button>
                     </div>
                 </form>
@@ -120,7 +121,7 @@
 
     </Authorized>
     <NotAuthorized>
-        <h2>Não autorizado</h2>
+        <h2>NÃ£o autorizado</h2>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -146,7 +147,7 @@
     private string username;
     private UtilizadorModel userFounded;
 
-    private byte[] imagemRelogio; // Alterada para ser um array de bytes
+    private string imagemRelogioPath = ""; // caminho relativo do ficheiro
 
     private int idLeilao;
 
@@ -155,20 +156,22 @@
     private async Task HandleFileInput(InputFileChangeEventArgs e)
     {
         var file = e.File;
+        var ext = Path.GetExtension(file.Name).ToLowerInvariant();
+        var fileName = $"{Guid.NewGuid()}{ext}";
+        var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "watches", fileName);
 
-        using (var stream = file.OpenReadStream())
-        {
-            var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            imagemRelogio = memoryStream.ToArray();
-        }
+        using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+        using var fs = new FileStream(uploadPath, FileMode.Create);
+        await stream.CopyToAsync(fs);
+
+        imagemRelogioPath = $"uploads/watches/{fileName}";
     }
 
     private async Task enviarNotificacaoVencedora()
     {
 
         List<DataLayer.Licitacao.LicitacaoModel> licitacoes = await LicitacaoRepo.FindAllFromLeilao(idLeilao);
-        LicitacaoModel ultimaLicitacao = licitacoes.OrderByDescending(bid => DateTime.TryParseExact(bid.Data, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate) ? parsedDate : DateTime.MinValue)
+        LicitacaoModel ultimaLicitacao = licitacoes.OrderByDescending(bid => DateTime.TryParseExact(bid.Data, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate) ? parsedDate : DateTime.MinValue)
                                          .FirstOrDefault();
 
         var novaNotificacao = new NotificacaoModel
@@ -195,9 +198,9 @@
 
         TimeSpan tempoEspera;
 
-        if (DateTime.ParseExact(leilaoInfo.DataFim, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now)
+        if (DateTime.ParseExact(leilaoInfo.DataFim, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) > DateTime.Now)
         {
-            tempoEspera = DateTime.ParseExact(leilaoInfo.DataFim, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.Now;
+            tempoEspera = DateTime.ParseExact(leilaoInfo.DataFim, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) - DateTime.Now;
             Console.WriteLine($"tempo de espera: {tempoEspera}");
 
             tempoLicitacao = new Timer(async (state) => await FinalizaLeilao(), null, tempoEspera, Timeout.InfiniteTimeSpan);
@@ -213,35 +216,35 @@
     private async Task CriarLeilao()
     {
 
-        Console.WriteLine("Inicio da criação do leilão...");
+        Console.WriteLine("Inicio da criaÃ§Ã£o do leilÃ£o...");
 
-        // Verificar se todos os campos obrigatórios estão preenchidos
+        // Verificar se todos os campos obrigatÃ³rios estÃ£o preenchidos
         if (string.IsNullOrWhiteSpace(modelo) || string.IsNullOrWhiteSpace(numeroSerie) || string.IsNullOrWhiteSpace(marca) ||
-        imagemRelogio == null || imagemRelogio.Length == 0 || precoBase < 0)
+        string.IsNullOrEmpty(imagemRelogioPath) || precoBase < 0)
         {
-            errorMessage = "Preencha todos os campos obrigatórios.";
+            errorMessage = "Preencha todos os campos obrigatÃ³rios.";
             await js.InvokeVoidAsync("alert", errorMessage);
             return;
         }
 
         Console.WriteLine($"Modelo: {modelo}");
-        Console.WriteLine($"Número de série: {numeroSerie}");
-        Console.WriteLine($"Descrição: {descricao}");
+        Console.WriteLine($"NÃºmero de sÃ©rie: {numeroSerie}");
+        Console.WriteLine($"DescriÃ§Ã£o: {descricao}");
         Console.WriteLine($"DataHoraInicio: {dataHoraInicio.ToString("yyyy-MM-dd HH:mm:ss")}");
         Console.WriteLine($"DataHoraFecho: {dataHoraFecho.ToString("yyyy-MM-dd HH:mm:ss")}");
-        Console.WriteLine($"Tamanho da Imagem: {imagemRelogio.Length} bytes");
+        Console.WriteLine($"Caminho da imagem: {imagemRelogioPath}");
 
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var userIdString = authState.User.FindFirst("UserId")?.Value;
         int userId = int.Parse(userIdString);
 
-        // Crie um objeto WatchModel com os dados do formulário
+        // Crie um objeto WatchModel com os dados do formulÃ¡rio
         var novoRelogio = new WatchModel
             {
                 Modelo = modelo,
                 NumeroSerie = numeroSerie,
                 Descricao = descricao,
-                Imagem = imagemRelogio, // Agora, só uma imagem
+                Imagem = imagemRelogioPath,
                 Marca = marca,
                 EstadoConservacao = estadoConservacao,
                 TemCaixaOriginal = temCaixaOriginal,
@@ -250,7 +253,7 @@
                 PrecoBase = precoBase
             };
 
-        // Adicione o relógio à base de dados usando o WatchRepository
+        // Adicione o relÃ³gio Ã  base de dados usando o WatchRepository
         int idWatch = await WatchRepo.AddClockAsync(novoRelogio);
 
         Console.WriteLine("-----------------------------");
@@ -270,13 +273,12 @@
 
         Console.WriteLine("Objeto WatchModel criado com sucesso.");
 
-        Console.WriteLine("Bytes da Imagem antes de salvar na base de dados:");
-        Console.WriteLine(BitConverter.ToString(imagemRelogio));
+        Console.WriteLine($"Caminho da imagem: {imagemRelogioPath}");
 
-        Console.WriteLine("Leilão criado com sucesso.");
+        Console.WriteLine("LeilÃ£o criado com sucesso.");
 
-        errorMessage = ""; // Limpar mensagem de erro se não houver erro
-        await js.InvokeVoidAsync("showSuccessNotification", "Leilão criado com sucesso.");
+        errorMessage = ""; // Limpar mensagem de erro se nÃ£o houver erro
+        await js.InvokeVoidAsync("showSuccessNotification", "LeilÃ£o criado com sucesso.");
         await Task.Delay(3000);
         NavigationManager.NavigateTo("/leiloar");
 
@@ -289,8 +291,9 @@
         userFounded = await UtilizadorRepo.UpdateNumLeilao(username, userFounded.numeroDeLeiloesFeitos + 1);
         
         errorMessage = "";
-        await js.InvokeVoidAsync("showSuccessNotification", "Leilão criado com sucesso.");
+        await js.InvokeVoidAsync("showSuccessNotification", "LeilÃ£o criado com sucesso.");
         await Task.Delay(3000);
         NavigationManager.NavigateTo("/leiloar");
     }
 }
+
