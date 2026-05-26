@@ -1,4 +1,4 @@
-@page "/leiloar"
+﻿@page "/leiloar"
 @using DataLayer.Watches
 @using DataLayer.Leilao
 @using DataLayer.Utilizador
@@ -12,13 +12,13 @@
 @inject ILicitacaoRepository LicitacaoRepo
 @inject IWebHostEnvironment _env
 
-<PageTitle>Leiloar RelÃ³gio</PageTitle>
+<PageTitle>Leiloar Relógio</PageTitle>
 
 <AuthorizeView Roles="Client">
     <Authorized>
         <div class="card">
             <div class="card-header">
-                <h2>Leiloar RelÃ³gio</h2>
+                <h2>Leiloar Relógio</h2>
             </div>
             <div class="card-body">
                 <form>
@@ -35,7 +35,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">NÃºmero de SÃ©rie:</span></label>
+                                <label><span class="label-text">Número de Série:</span></label>
                                 <input type="text" @bind="numeroSerie" />
                             </div>
 
@@ -45,14 +45,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">DescriÃ§Ã£o:</span></label>
+                                <label><span class="label-text">Descrição:</span></label>
                                 <textarea @bind="descricao" style="height: 130px;"></textarea>
                             </div>
                         </div>
 
                         <div class="form-column">
                             <div class="form-group">
-                                <label><span class="label-text">Estado de ConservaÃ§Ã£o:</span></label>
+                                <label><span class="label-text">Estado de Conservação:</span></label>
                                 <select @bind="estadoConservacao">
                                     <option value="Novo">Novo</option>
                                     <option value="Usado">Usado</option>
@@ -69,13 +69,13 @@
                                     </div>
                                     <div class="radio-option">
                                         <input type="radio" id="temCaixaOriginalNao" name="temCaixaOriginal" @bind="temCaixaOriginal" />
-                                        <label for="temCaixaOriginalNao">NÃ£o</label>
+                                        <label for="temCaixaOriginalNao">Não</label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">RelÃ³gio Funciona?</span></label>
+                                <label><span class="label-text">Relógio Funciona?</span></label>
                                 <div class="radio-options">
                                     <div class="radio-option">
                                         <input type="radio" id="relogioFuncionaSim" name="relogioFunciona" @bind="relogioFunciona" />
@@ -83,7 +83,7 @@
                                     </div>
                                     <div class="radio-option">
                                         <input type="radio" id="relogioFuncionaNao" name="relogioFunciona" @bind="relogioFunciona" />
-                                        <label for="relogioFuncionaNao">NÃ£o</label>
+                                        <label for="relogioFuncionaNao">Não</label>
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label><span class="label-text">Data e Hora de InÃ­cio:</span></label>
+                                <label><span class="label-text">Data e Hora de Início:</span></label>
                                 <input type="datetime-local" @bind="dataHoraInicio" />
                             </div>
 
@@ -106,13 +106,13 @@
                     </div>
 
                     <div class="price-group" style="text-align: center;">
-                        <label><span class="label-text">PreÃ§o Inicial: </span></label>
+                        <label><span class="label-text">Preço Inicial: </span></label>
                         <input type="text" @bind="precoBase" />
                     </div>
 
                     <div class="form-group" style="text-align: center; margin-top: 20px;">
                         <button class="button-9" @onclick="CriarLeilao">
-                            Criar LeilÃ£o
+                            Criar Leilão
                         </button>
                     </div>
                 </form>
@@ -121,7 +121,7 @@
 
     </Authorized>
     <NotAuthorized>
-        <h2>NÃ£o autorizado</h2>
+        <h2>Não autorizado</h2>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -216,20 +216,20 @@
     private async Task CriarLeilao()
     {
 
-        Console.WriteLine("Inicio da criaÃ§Ã£o do leilÃ£o...");
+        Console.WriteLine("Inicio da criação do leilão...");
 
-        // Verificar se todos os campos obrigatÃ³rios estÃ£o preenchidos
+        // Verificar se todos os campos obrigatórios estão preenchidos
         if (string.IsNullOrWhiteSpace(modelo) || string.IsNullOrWhiteSpace(numeroSerie) || string.IsNullOrWhiteSpace(marca) ||
         string.IsNullOrEmpty(imagemRelogioPath) || precoBase < 0)
         {
-            errorMessage = "Preencha todos os campos obrigatÃ³rios.";
+            errorMessage = "Preencha todos os campos obrigatórios.";
             await js.InvokeVoidAsync("alert", errorMessage);
             return;
         }
 
         Console.WriteLine($"Modelo: {modelo}");
-        Console.WriteLine($"NÃºmero de sÃ©rie: {numeroSerie}");
-        Console.WriteLine($"DescriÃ§Ã£o: {descricao}");
+        Console.WriteLine($"Número de série: {numeroSerie}");
+        Console.WriteLine($"Descrição: {descricao}");
         Console.WriteLine($"DataHoraInicio: {dataHoraInicio.ToString("yyyy-MM-dd HH:mm:ss")}");
         Console.WriteLine($"DataHoraFecho: {dataHoraFecho.ToString("yyyy-MM-dd HH:mm:ss")}");
         Console.WriteLine($"Caminho da imagem: {imagemRelogioPath}");
@@ -238,7 +238,7 @@
         var userIdString = authState.User.FindFirst("UserId")?.Value;
         int userId = int.Parse(userIdString);
 
-        // Crie um objeto WatchModel com os dados do formulÃ¡rio
+        // Crie um objeto WatchModel com os dados do formulário
         var novoRelogio = new WatchModel
             {
                 Modelo = modelo,
@@ -253,7 +253,7 @@
                 PrecoBase = precoBase
             };
 
-        // Adicione o relÃ³gio Ã  base de dados usando o WatchRepository
+        // Adicione o relógio à base de dados usando o WatchRepository
         int idWatch = await WatchRepo.AddClockAsync(novoRelogio);
 
         Console.WriteLine("-----------------------------");
@@ -275,10 +275,10 @@
 
         Console.WriteLine($"Caminho da imagem: {imagemRelogioPath}");
 
-        Console.WriteLine("LeilÃ£o criado com sucesso.");
+        Console.WriteLine("Leilão criado com sucesso.");
 
-        errorMessage = ""; // Limpar mensagem de erro se nÃ£o houver erro
-        await js.InvokeVoidAsync("showSuccessNotification", "LeilÃ£o criado com sucesso.");
+        errorMessage = ""; // Limpar mensagem de erro se não houver erro
+        await js.InvokeVoidAsync("showSuccessNotification", "Leilão criado com sucesso.");
         await Task.Delay(3000);
         NavigationManager.NavigateTo("/leiloar");
 
@@ -291,7 +291,7 @@
         userFounded = await UtilizadorRepo.UpdateNumLeilao(username, userFounded.numeroDeLeiloesFeitos + 1);
         
         errorMessage = "";
-        await js.InvokeVoidAsync("showSuccessNotification", "LeilÃ£o criado com sucesso.");
+        await js.InvokeVoidAsync("showSuccessNotification", "Leilão criado com sucesso.");
         await Task.Delay(3000);
         NavigationManager.NavigateTo("/leiloar");
     }
